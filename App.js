@@ -67,7 +67,7 @@ export default function App() {
     let estadoVenta = false;
 
     if (pago === "credito") {
-      precioFinal = precioFinal * Math.pow((1 + 0.8), 9);
+      precioFinal = precioFinal * Math.pow((1 + 0.08), 9);
       impuesto = precioFinal * 0.07;
       total = precioFinal + impuesto;
       letra = total / (9 * 12);
