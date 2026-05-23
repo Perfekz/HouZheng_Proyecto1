@@ -28,7 +28,8 @@ export default function App() {
     const precio = parseFloat(costo);
     const sueldo = parseFloat(salario);
 
-    if (!costo.trim() && !salario.trim()) {
+    if (!costo.trim()) {
+      setResultado(null);
       Alert.alert(
         "Campos vacíos",
         "Por favor ingresa el costo del auto y tu salario para continuar.",
@@ -46,15 +47,17 @@ export default function App() {
       return;
     }
 
-    if (!salario.trim() || isNaN(sueldo) || sueldo <= 0) {
-      Alert.alert(
+    if (pago === "credito") {
+      if (!salario.trim() || isNaN(sueldo) || sueldo <= 0) {
+        setResultado(null);
+        Alert.alert(
         "Salario inválido",
         "Ingresa un salario válido mayor a cero.",
         [{ text: "OK" }]
       );
       return;
-    }
-
+    }}
+    
     let precioFinal = precio;
 
     if (transmision === "automatico") {
@@ -82,7 +85,7 @@ export default function App() {
       impuesto,
       total,
       letra,
-      treintaPorciento: sueldo * 0.3,
+      treintaPorciento: (sueldo || 0) * 0.3,
       estadoVenta,
     });
   };
@@ -138,21 +141,24 @@ export default function App() {
                 />
               </View>
             </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>SALARIO MENSUAL</Text>
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputPrefix}>$</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="0.00"
-                  placeholderTextColor="#94a3b8"
-                  keyboardType="numeric"
-                  value={salario}
-                  onChangeText={setSalario}
-                />
+            { pago === "credito" && (
+                <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>SALARIO MENSUAL</Text>
+                <View style={styles.inputWrapper}>
+                  <Text style={styles.inputPrefix}>$</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="0.00"
+                    placeholderTextColor="#94a3b8"
+                    keyboardType="numeric"
+                    value={salario}
+                    onChangeText={setSalario}
+                  />
               </View>
             </View>
+              )
+            }
+            
 
             <Text style={styles.sectionLabel}>TRANSMISIÓN</Text>
             <View style={styles.radioRow}>
@@ -173,12 +179,18 @@ export default function App() {
               <RadioButton
                 label="Contado"
                 selected={pago === "contado"}
-                onPress={() => setPago("contado")}
+                onPress={() => {
+                  setPago("contado");
+                  setResultado(null);
+                }}
               />
               <RadioButton
                 label="Crédito"
                 selected={pago === "credito"}
-                onPress={() => setPago("credito")}
+                onPress={() => {
+                  setPago("credito");
+                  setResultado(null);
+                }}
               />
             </View>
 
@@ -190,11 +202,15 @@ export default function App() {
               <View style={styles.resultado}>
                 <Text style={styles.resultTitle}>FACTURA</Text>
 
-                <ResultRow label="Costo del auto" value={fmt(resultado.costoAuto)} />
-                <View style={styles.resultDivider} />
-                <ResultRow label="ITBM (7%)" value={fmt(resultado.impuesto)} />
-                <View style={styles.resultDivider} />
-                <ResultRow label="Gran total" value={fmt(resultado.total)} highlight />
+                {pago === "contado" && (
+                  <>
+                  <ResultRow label="Costo del auto" value={fmt(resultado.costoAuto)} />
+                  <View style={styles.resultDivider} />
+                  <ResultRow label="ITBM (7%)" value={fmt(resultado.impuesto)} />
+                  <View style={styles.resultDivider} />
+                  <ResultRow label="Gran total" value={fmt(resultado.total)} highlight />
+                  </>
+                )}
 
                 {pago === "credito" && (
                   <>
