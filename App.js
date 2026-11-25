@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   },
 
   radioRow: {
-    flexDirection: "row",
+    flexDirection: "column",
     gap: 12,
     marginBottom: 18,
   },
